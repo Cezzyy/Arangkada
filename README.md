@@ -3,6 +3,7 @@
 A static scooter and motorcycle maintenance logging app built with React Native and Expo.
 
 **Student Name:** John Cez B. Casupanan 
+
 **Section:** CS41A
 
 ---
