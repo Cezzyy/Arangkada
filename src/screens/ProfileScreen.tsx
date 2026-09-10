@@ -17,11 +17,16 @@ import { Colors, FontSize, Spacing, Radius } from '../theme/tokens';
 interface SpecRowProps {
   label: string;
   value: string;
+  iconName: keyof typeof Ionicons.glyphMap;
+  last?: boolean;
 }
 
-function SpecRow({ label, value }: SpecRowProps) {
+function SpecRow({ label, value, iconName, last = false }: SpecRowProps) {
   return (
-    <View style={styles.specRow}>
+    <View style={[styles.specRow, last && styles.specRowLast]}>
+      <View style={styles.specIconWrap}>
+        <Ionicons name={iconName} size={17} color={Colors.accent} />
+      </View>
       <Text style={styles.specLabel}>{label}</Text>
       <Text style={styles.specValue}>{value}</Text>
     </View>
@@ -56,58 +61,77 @@ export default function ProfileScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      {/* Identity */}
+      {/* Bike identity — plain, like the dashboard hero */}
       <View style={styles.identity}>
         <Text style={styles.bikeModel}>{bikeProfile.model}</Text>
         <Text style={styles.bikePlate}>{bikeProfile.plateNumber}</Text>
       </View>
 
-      <View style={styles.rule} />
-
-      {/* Specs */}
+      {/* Specifications card */}
       <Text style={styles.sectionLabel}>Specifications</Text>
-      <View style={styles.specsBlock}>
-        <SpecRow label="Year" value={String(bikeProfile.year)} />
-        <SpecRow label="Fuel capacity" value={bikeProfile.fuelCapacity} />
+      <View style={styles.specsCard}>
+        <SpecRow
+          label="Model"
+          value={bikeProfile.model}
+          iconName="bicycle-outline"
+        />
+        <SpecRow
+          label="Year"
+          value={String(bikeProfile.year)}
+          iconName="calendar-outline"
+        />
+        <SpecRow
+          label="Fuel capacity"
+          value={bikeProfile.fuelCapacity}
+          iconName="water-outline"
+        />
         <SpecRow
           label="Odometer"
           value={`${bikeProfile.currentOdometer.toLocaleString()} km`}
+          iconName="speedometer-outline"
         />
-        <SpecRow label="Plate" value={bikeProfile.plateNumber} />
+        <SpecRow
+          label="Plate"
+          value={bikeProfile.plateNumber}
+          iconName="card-outline"
+          last
+        />
       </View>
 
-      <View style={styles.rule} />
-
-      {/* Receipt */}
+      {/* Receipt card */}
       <Text style={styles.sectionLabel}>Service receipt</Text>
+      <View style={styles.receiptCard}>
+        {receiptUri ? (
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: receiptUri }}
+              style={styles.receiptImage}
+              resizeMode="cover"
+            />
+            <TouchableOpacity
+              style={styles.removeBtn}
+              onPress={() => setReceiptUri(null)}
+            >
+              <Ionicons name="close" size={14} color={Colors.textPrimary} />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.emptyReceipt}>
+            <View style={styles.emptyIcon}>
+              <Ionicons name="receipt-outline" size={28} color={Colors.accent} />
+            </View>
+            <Text style={styles.emptyTitle}>No receipt attached</Text>
+            <Text style={styles.emptyText}>Upload a photo of your last service receipt</Text>
+          </View>
+        )}
 
-      {receiptUri ? (
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: receiptUri }}
-            style={styles.receiptImage}
-            resizeMode="cover"
-          />
-          <TouchableOpacity
-            style={styles.removeBtn}
-            onPress={() => setReceiptUri(null)}
-          >
-            <Ionicons name="close" size={14} color={Colors.textPrimary} />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.emptyReceipt}>
-          <Ionicons name="camera-outline" size={26} color={Colors.textMuted} />
-          <Text style={styles.emptyText}>Attach a photo of your last receipt</Text>
-        </View>
-      )}
-
-      <CustomButton
-        title={receiptUri ? 'Replace receipt' : 'Upload receipt'}
-        onPress={handlePickImage}
-        iconName="camera-outline"
-        variant={receiptUri ? 'outline' : 'primary'}
-      />
+        <CustomButton
+          title={receiptUri ? 'Replace receipt' : 'Upload receipt'}
+          onPress={handlePickImage}
+          iconName="camera-outline"
+          variant={receiptUri ? 'outline' : 'primary'}
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -119,15 +143,19 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.xl,
+    paddingTop: Spacing.lg,
     paddingBottom: 120,
+    gap: Spacing.sm,
   },
+
+  /* Identity — plain on background */
   identity: {
-    marginBottom: Spacing.xl,
+    paddingTop: Spacing.sm,
+    marginBottom: Spacing.lg,
   },
   bikeModel: {
-    fontSize: FontSize['2xl'],
-    fontWeight: '700',
+    fontSize: FontSize.xl,
+    fontWeight: '800',
     color: Colors.textPrimary,
     letterSpacing: -0.5,
     marginBottom: Spacing.xs,
@@ -137,28 +165,43 @@ const styles = StyleSheet.create({
     color: Colors.accent,
     fontWeight: '600',
   },
-  rule: {
-    height: 1,
-    backgroundColor: Colors.border,
-    marginBottom: Spacing.lg,
-  },
+
+  /* Section label */
   sectionLabel: {
-    fontSize: FontSize.sm,
+    fontSize: FontSize.xs,
     color: Colors.textSecondary,
-    fontWeight: '500',
-    marginBottom: 0,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    marginBottom: Spacing.xs,
+    marginTop: Spacing.xs,
   },
-  specsBlock: {
-    marginBottom: Spacing.xl,
+
+  /* Specs card */
+  specsCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    overflow: 'hidden',
+    marginBottom: Spacing.md,
   },
   specRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
+    alignItems: 'center',
+    paddingVertical: 13,
+    paddingHorizontal: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.borderSubtle,
+    borderBottomColor: Colors.border,
+  },
+  specRowLast: {
+    borderBottomWidth: 0,
+  },
+  specIconWrap: {
+    width: 30,
+    marginRight: Spacing.sm,
   },
   specLabel: {
+    flex: 1,
     fontSize: FontSize.sm,
     color: Colors.textSecondary,
   },
@@ -167,12 +210,21 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     fontWeight: '600',
   },
+
+  /* Receipt card */
+  receiptCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+    gap: Spacing.sm,
+  },
   imageContainer: {
     borderRadius: Radius.md,
     overflow: 'hidden',
     aspectRatio: 4 / 3,
-    marginTop: Spacing.md,
-    marginBottom: Spacing.md,
     position: 'relative',
   },
   receiptImage: {
@@ -186,24 +238,32 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: 'rgba(255,255,255,0.9)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   emptyReceipt: {
-    height: 110,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    paddingVertical: Spacing.xl,
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  emptyIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 999,
+    backgroundColor: Colors.accentLight,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.surface,
-    marginTop: Spacing.md,
-    marginBottom: Spacing.md,
-    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  emptyTitle: {
+    fontSize: FontSize.base,
+    fontWeight: '600',
+    color: Colors.textPrimary,
   },
   emptyText: {
-    fontSize: FontSize.sm,
-    color: Colors.textMuted,
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
+    textAlign: 'center',
   },
 });
