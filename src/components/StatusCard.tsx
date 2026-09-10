@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors, FontSize, Spacing } from '../theme/tokens';
 
 interface StatusCardProps {
   title: string;
@@ -18,75 +19,44 @@ export default function StatusCard({
   iconName,
 }: StatusCardProps) {
   return (
-    <View style={styles.card}>
-      {/* Left: icon */}
-      <View style={[styles.iconContainer, { backgroundColor: badgeColor + '20' }]}>
-        <Ionicons name={iconName} size={22} color={badgeColor} />
+    <View style={styles.row}>
+      <Ionicons name={iconName} size={18} color={Colors.textSecondary} style={styles.icon} />
+      <View style={styles.text}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
-
-      {/* Center: title + subtitle */}
-      <View style={styles.textContainer}>
-        <Text style={styles.title} numberOfLines={1}>
-          {title}
-        </Text>
-        <Text style={styles.subtitle} numberOfLines={1}>
-          {subtitle}
-        </Text>
-      </View>
-
-      {/* Right: badge */}
-      <View style={[styles.badge, { backgroundColor: badgeColor }]}>
-        <Text style={styles.badgeText}>{badgeText}</Text>
-      </View>
+      <Text style={[styles.status, { color: badgeColor }]}>{badgeText}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
   },
-  iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+  icon: {
+    marginRight: Spacing.md,
   },
-  textContainer: {
+  text: {
     flex: 1,
-    marginRight: 8,
   },
   title: {
-    fontSize: 14,
+    fontSize: FontSize.sm,
     fontWeight: '600',
-    color: '#1E293B',
+    color: Colors.textPrimary,
     marginBottom: 2,
   },
   subtitle: {
-    fontSize: 12,
-    color: '#64748B',
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
   },
-  badge: {
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFFFFF',
+  status: {
+    fontSize: FontSize.sm,
+    fontWeight: '600',
+    marginLeft: Spacing.sm,
   },
 });

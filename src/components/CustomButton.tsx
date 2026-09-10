@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors, FontSize, Spacing } from '../theme/tokens';
 
 interface CustomButtonProps {
   title: string;
@@ -29,18 +30,18 @@ export default function CustomButton({
     <TouchableOpacity
       style={[styles.button, isPrimary ? styles.primaryButton : styles.outlineButton]}
       onPress={onPress}
-      activeOpacity={0.75}
+      activeOpacity={0.8}
       disabled={loading}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? '#FFFFFF' : '#2563EB'} />
+        <ActivityIndicator color={isPrimary ? Colors.surface : Colors.accent} />
       ) : (
         <View style={styles.inner}>
           {iconName && (
             <Ionicons
               name={iconName}
-              size={18}
-              color={isPrimary ? '#FFFFFF' : '#2563EB'}
+              size={16}
+              color={isPrimary ? Colors.surface : Colors.accent}
               style={styles.icon}
             />
           )}
@@ -55,35 +56,36 @@ export default function CustomButton({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 12,
+    borderRadius: 8,
     paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingHorizontal: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   primaryButton: {
-    backgroundColor: '#2563EB',
+    backgroundColor: Colors.accent,
   },
   outlineButton: {
     backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: '#2563EB',
+    borderWidth: 1,
+    borderColor: Colors.accent,
   },
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   icon: {
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   label: {
-    fontSize: 15,
+    fontSize: FontSize.sm,
     fontWeight: '600',
+    letterSpacing: 0.2,
   },
   primaryLabel: {
-    color: '#FFFFFF',
+    color: Colors.surface,
   },
   outlineLabel: {
-    color: '#2563EB',
+    color: Colors.accent,
   },
 });
